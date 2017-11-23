@@ -37,51 +37,51 @@ class Net(nn.Module):
     def forward(self, X):
         h = self.conv1_1(X)
         h = F.relu(h)
-        h = self.bn1(x)
+        h = self.bn1(h)
         # -----------------------------------------
         h = self.conv1_2(h)
         h = F.relu(h)
-        h = self.bn1(x)
+        h = self.bn1(h)
         h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
 
         h = self.conv2_1(h)
         h = F.relu(h)
-        h = self.bn2(x)
+        h = self.bn2(h)
         # -----------------------------------------
         h = self.conv2_2(h)
         h = F.relu(h)
-        h = self.bn2(x)
+        h = self.bn2(h)
         h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
 
         h = self.conv3_1(h)
         h = F.relu(h)
-        h = self.bn3(x)
+        h = self.bn3(h)
         # -----------------------------------------
         h = self.conv3_2(h)
         h = F.relu(h)
-        h = self.bn3(x)
+        h = self.bn3(h)
         h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
 
         h = self.conv4_1(h)
         h = F.relu(h)
-        h = self.bn4(x)
+        h = self.bn4(h)
         # -----------------------------------------
         h = self.conv4_2(h)
         h = F.relu(h)
-        h = self.bn4(x)
+        h = self.bn4(h)
         h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
 
         h = self.conv5_1(h)
         h = F.relu(h)
-        h = self.bn4(x)
+        h = self.bn4(h)
         # -----------------------------------------
         h = self.conv5_2(h)
         h = F.relu(h)
-        h = self.bn4(x)
+        h = self.bn4(h)
         h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
         # ---------------------------------------------------------------
         # ---------------------------------------------------------------
         # ---------------------------------------------------------------
-        h = x.view(h.size(0), -1)
+        h = h.view(h.size(0), -1)
         h = self.classifier(h)
         return h
