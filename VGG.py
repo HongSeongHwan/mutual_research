@@ -6,10 +6,12 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
+        self.conv_info = []
         self.conv1_1 = nn.Conv2d(3, 64, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(64)
-        self.conv1_2 = nn.Conv2d(64, 64, kernel_size=3, padding=1)
 
+        self.bn1 = nn.BatchNorm2d(64)
+
+        self.conv1_2 = nn.Conv2d(64, 64, kernel_size=3, padding=1)
         self.conv2_1 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
         self.conv2_2 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(128)
@@ -49,6 +51,7 @@ class Net(nn.Module):
         h = self.bn1(h)
         # -----------------------------------------
         h = self.conv1_2(h)
+        self.conv_info =  h
         h = F.relu(h)
         h = self.bn1(h)
         h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
