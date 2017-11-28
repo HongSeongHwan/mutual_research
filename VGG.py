@@ -33,6 +33,15 @@ class Net(nn.Module):
             nn.Dropout(),
             nn.Linear(4096, 1),
         )
+        self.classifier2 = nn.Sequential(
+            nn.Linear(256 * 4 * 4, 1024),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(1024, 1024),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(1024, 10),
+        )
 
     def forward(self, X):
         h = self.conv1_1(X)
@@ -61,27 +70,31 @@ class Net(nn.Module):
         h = F.relu(h)
         h = self.bn3(h)
         h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
-
-        h = self.conv4_1(h)
-        h = F.relu(h)
-        h = self.bn4(h)
-        # -----------------------------------------
-        h = self.conv4_2(h)
-        h = F.relu(h)
-        h = self.bn4(h)
-        h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
-
-        h = self.conv5_1(h)
-        h = F.relu(h)
-        h = self.bn4(h)
-        # -----------------------------------------
-        h = self.conv5_2(h)
-        h = F.relu(h)
-        h = self.bn4(h)
-        h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
-        # ---------------------------------------------------------------
-        # ---------------------------------------------------------------
-        # ---------------------------------------------------------------
-        h = h.view(h.size(0), -1)
-        h = self.classifier(h)
-        return h
+        h_ = h
+        #
+        # h = self.conv4_1(h)
+        # h = F.relu(h)
+        # h = self.bn4(h)
+        # # -----------------------------------------
+        # h = self.conv4_2(h)
+        # h = F.relu(h)
+        # h = self.bn4(h)
+        # h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
+        #
+        # h = self.conv5_1(h)
+        # h = F.relu(h)
+        # h = self.bn4(h)
+        # # -----------------------------------------
+        # h = self.conv5_2(h)
+        # h = F.relu(h)
+        # h = self.bn4(h)
+        # h = F.max_pool2d(h, kernel_size=(2, 2), stride=(2, 2))
+        # # ---------------------------------------------------------------
+        # # ---------------------------------------------------------------
+        # # ---------------------------------------------------------------
+        #
+        # h = h.view(h.size(0), -1)
+        # h = self.classifier(h)
+        h_ = h_.view(h_.size(0),-1)
+        h_=self.classifier2(h_)
+        return h_

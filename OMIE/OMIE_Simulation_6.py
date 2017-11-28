@@ -14,8 +14,8 @@ from pycrayon import CrayonClient
 import time
 
 cc = CrayonClient(hostname="10.150.6.120")
-cc.remove_experiment("OMIE_5")
-OMIE = cc.create_experiment("OMIE_5")
+#cc.remove_experiment("OMIE_6")
+OMIE = cc.create_experiment("OMIE_6")
 ###
 ### noise level one
 ### dimension 2
