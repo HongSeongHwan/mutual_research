@@ -11,11 +11,11 @@ from pycrayon import CrayonClient
 import time
 
 cc = CrayonClient(hostname="10.150.6.120")
-cc.remove_experiment("OMIE_1")
-OMIE = cc.create_experiment("OMIE_1")
+cc.remove_experiment("OMIE_3")
+OMIE = cc.create_experiment("OMIE_3")
 ###
 ### noise level one
-### dimension 1
+### dimension 2
 ### z는 따로 추출
 ###
 input_size = 2
@@ -61,11 +61,11 @@ for epoch in range(300000):
         for i in range(batch_size):
 
             x_random = np.random.randn(1)
-            z_random = x_random *  3 + 0.01 * np.random.randn(1)
+            z_random = x_random *  3 + 0.001 * np.random.randn(1)
             var = np.random.randn(1)
 
             x_random_margin = np.random.randn(1)
-            z_random_margin = var * 3+ 0.01 * np.random.randn(1)
+            z_random_margin = var * 3 + 0.001 * np.random.randn(1)
 
             inputs = Variable(torch.from_numpy(np.concatenate((x_random, z_random))).cuda()).type(
                 torch.cuda.FloatTensor)

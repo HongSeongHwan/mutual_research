@@ -5,17 +5,20 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
-
+import numpy as np
+mean = np.array([1,2])
+cov =  np.array([[1,0.8],[0.8,1]])
+# = np.random.multivariate_normal(mean,cov,5000)
 
 from pycrayon import CrayonClient
 import time
 
 cc = CrayonClient(hostname="10.150.6.120")
-cc.remove_experiment("OMIE_1")
-OMIE = cc.create_experiment("OMIE_1")
+#cc.remove_experiment("OMIE_3")
+OMIE = cc.create_experiment("OMIE_4")
 ###
 ### noise level one
-### dimension 1
+### dimension 2
 ### z는 따로 추출
 ###
 input_size = 2
@@ -24,7 +27,7 @@ hidden_size_ = 3
 num_classes = 1
 
 num_epochs = 9
-learning_rate = 0.00001
+learning_rate = 0.0001
 debug_mode = True
 
 
@@ -59,13 +62,13 @@ for epoch in range(300000):
         if j % 100 == 0:
             print(epoch, j)
         for i in range(batch_size):
+            data_= np.random.multivariate_normal(mean, cov, 1)
+            x_random = data_[:,0]
+            z_random =  data_[:,1]
 
-            x_random = np.random.randn(1)
-            z_random = x_random *  3 + 0.01 * np.random.randn(1)
-            var = np.random.randn(1)
-
-            x_random_margin = np.random.randn(1)
-            z_random_margin = var * 3+ 0.01 * np.random.randn(1)
+            data_= np.random.multivariate_normal(mean, cov, 1)
+            x_random_margin = x_random
+            z_random_margin = data_[:,1]
 
             inputs = Variable(torch.from_numpy(np.concatenate((x_random, z_random))).cuda()).type(
                 torch.cuda.FloatTensor)
