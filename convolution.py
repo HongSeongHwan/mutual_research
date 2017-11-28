@@ -12,7 +12,7 @@ import argparse
 from torch.autograd import Variable
 from VGG import Net
 from GV import *
-
+import numpy as np
 # Data
 print('==> Preparing data..')
 transform_train = transforms.Compose([
@@ -58,16 +58,13 @@ optimizer = optim.SGD(net.parameters(), lr=A_Learning_Rate, momentum=0.9, weight
 
 
 
-
-
-
-
 def train(epoch):
     print('\nEpoch: %d' % epoch)
     net.train()
     train_loss = 0
     correct = 0
     total = 0
+
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         if use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
