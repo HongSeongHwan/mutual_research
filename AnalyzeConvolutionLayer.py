@@ -21,6 +21,7 @@ for i in range(128):
 np.random.shuffle(b)
 print(b.shape)
 data = b
+data=data.transpose()
 
 import torch
 import numpy as np
@@ -56,7 +57,7 @@ hidden_size_ = 64
 num_classes = 1
 
 num_epochs = 9
-learning_rate = 0.0001
+learning_rate = 0.000001
 debug_mode = True
 
 
@@ -80,7 +81,7 @@ model = Net(input_size, hidden_size_, hidden_size, num_classes).cuda()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 for epoch in range(300000):
-    batch_size = 40
+    batch_size = 10
     for j in range(1000):
         optimizer.zero_grad()
         output_sigma = torch.Tensor(1).cuda()
@@ -92,15 +93,17 @@ for epoch in range(300000):
         if j % 100 == 0:
             print(epoch, j)
         for i in range(batch_size):
-            x_random = np.copy(data[0:batch_size,0:32])
-            z_random =  np.copy(data[0:batch_size,32:64])
+          #  print("--")
+            np.random.shuffle(data)
+            x_random = np.copy(data[i,0:32])
+            z_random =  np.copy(data[i,32:64])
 
             x_random_margin = np.copy(x_random)
-            z_random_margin = np.copy(data[batch_size:2*batch_size,32:64])
+            z_random_margin = np.copy(data[batch_size+i,32:64])
 
-            inputs = Variable(torch.from_numpy(np.concatenate((x_random, z_random), 1)).cuda()).type(
+            inputs = Variable(torch.from_numpy(np.concatenate((x_random, z_random))).cuda()).type(
                 torch.cuda.FloatTensor)
-            inputs2 = Variable(torch.from_numpy(np.concatenate((x_random_margin, z_random_margin),1)).cuda()).type(
+            inputs2 = Variable(torch.from_numpy(np.concatenate((x_random_margin, z_random_margin))).cuda()).type(
                 torch.cuda.FloatTensor)
 
             output_sigma = output_sigma + model(inputs)
@@ -108,7 +111,7 @@ for epoch in range(300000):
 
         loss = (output_sigma / batch_size) - torch.log(exp_output_sigma / batch_size)
         loss = -10 * loss
-        OMIE.add_scalar_value("accuracy", np.float(loss.cpu().data.numpy()[0]))
+        OMIE.add_scalar_value("OMIE", np.float(loss.cpu().data.numpy()[0]))
         # loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()

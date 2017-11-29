@@ -6,24 +6,54 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 import numpy as np
-mean = np.array([1,2,3,1])
-cov =  np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
-# = np.random.multivariate_normal(mean,cov,5000)
 
+temp = np.load('20__0__conv.npy.npz')
+
+a = temp.items()
+a=a[0]
+a=a[1]
+b = np.ones((64,32*32*128))
+for i in range(128):
+    for j in range(64):
+        for k in range(32):
+            for l in range(32):
+                b[j,  ((i*32)+k)*32+l   ] = a[i,j,k,l]
+np.random.shuffle(b)
+print(b.shape)
+data = b
+data=data.transpose()
+
+import torch
+import numpy as np
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torchvision import datasets, transforms
+from torch.autograd import Variable
+import numpy as np
 from pycrayon import CrayonClient
 import time
 
 cc = CrayonClient(hostname="10.150.6.120")
-cc.remove_experiment("OMIE_5")
-OMIE = cc.create_experiment("OMIE_5")
-###
-### noise level one
-### dimension 2
+
+try:
+    cc.remove_experiment("AnalyzeConv_2")
+except:
+    pass
+
+try:
+    OMIE = cc.create_experiment("AnalyzeConv_2")
+except:
+    pass
+
+##
+## noise level one
+## dimension 2
 ### z는 따로 추출
 ###
-input_size = 4
-hidden_size = 8
-hidden_size_ = 3
+input_size = 64
+hidden_size = 128
+hidden_size_ = 64
 num_classes = 1
 
 num_epochs = 9
@@ -49,8 +79,9 @@ class Net(nn.Module):
 
 model = Net(input_size, hidden_size_, hidden_size, num_classes).cuda()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
 for epoch in range(300000):
-    batch_size = 40
+    batch_size = 10
     for j in range(1000):
         optimizer.zero_grad()
         output_sigma = torch.Tensor(1).cuda()
@@ -62,13 +93,13 @@ for epoch in range(300000):
         if j % 100 == 0:
             print(epoch, j)
         for i in range(batch_size):
-            data_= np.random.multivariate_normal(mean, cov, 1)
-            x_random = data_[0,0:2]
-            z_random =  data_[0,2:4]
+          #  print("--")
+            np.random.shuffle(data)
+            x_random = np.copy(data[i,0:32])
+            z_random =  np.copy(data[i,32:64])
 
-            data_= np.random.multivariate_normal(mean, cov, 1)
-            x_random_margin = x_random
-            z_random_margin = data_[0,2:4]
+            x_random_margin = np.copy(x_random)
+            z_random_margin = np.copy(data[batch_size+i,32:64])
 
             inputs = Variable(torch.from_numpy(np.concatenate((x_random, z_random))).cuda()).type(
                 torch.cuda.FloatTensor)
@@ -80,7 +111,7 @@ for epoch in range(300000):
 
         loss = (output_sigma / batch_size) - torch.log(exp_output_sigma / batch_size)
         loss = -10 * loss
-        OMIE.add_scalar_value("accuracy", np.float(loss.cpu().data.numpy()[0]))
+        OMIE.add_scalar_value("OMIE", np.float(loss.cpu().data.numpy()[0]))
         # loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
