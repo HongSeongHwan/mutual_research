@@ -7,7 +7,7 @@ from torchvision import datasets, transforms
 from torch.autograd import Variable
 import numpy as np
 
-temp = np.load('20__0__conv.npy.npz')
+temp = np.load('3__0__conv.npy.npz')
 
 a = temp.items()
 a=a[0]
@@ -37,12 +37,12 @@ import time
 cc = CrayonClient(hostname="10.150.6.120")
 
 try:
-    cc.remove_experiment("AnalyzeConv_2")
+    cc.remove_experiment("AnalyzeConv3")
 except:
     pass
 
 try:
-    OMIE = cc.create_experiment("AnalyzeConv_2")
+    OMIE = cc.create_experiment("AnalyzeConv3")
 except:
     pass
 
